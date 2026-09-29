@@ -77,6 +77,10 @@ This project was built with intentional bugs as part of a technical assessment. 
 **Problem:** The app called Groq's `llama-3.3-70b-versatile`, which has moved to Groq's Enterprise tier and returns a 404 for standard free-tier API keys — every request silently fell back to fake mock data.
 **Fix:** Switched to `openai/gpt-oss-20b`, available on Groq's free/developer tier, verified working end-to-end. Covered by `src/utils/llmHelper.test.js` (mocks the Groq client to assert the correct model is requested and that category parsing/mock fallback still behave correctly).
 
+### 2. Inverted and non-deterministic urgency scoring
+**Problem:** The urgency scorer penalized ALL-CAPS and short messages as *less* urgent (both common in real emergencies — e.g. "SITE IS DOWN RIGHT NOW" scored Low), and factored in the current day-of-week/hour, so the same message could score differently depending on when it was analyzed. There was no keyword signal for genuine emergencies at all.
+**Fix:** Rewrote `calculateUrgency` to be fully deterministic (no time dependence), removed the ALL-CAPS/brevity penalties, and added explicit keyword detection for emergency language (down, outage, broken, urgent, etc.) as the dominant signal. Polite/positive tone still dampens urgency but can no longer fully mask a real emergency. Covered by `src/utils/urgencyScorer.test.js`, including a determinism check and the "SITE IS DOWN RIGHT NOW" / "Server down now" regression cases.
+
 ## Example Test Messages
 
 Try analyzing these messages to see how the triage system works:
