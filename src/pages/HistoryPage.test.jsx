@@ -47,6 +47,33 @@ describe('HistoryPage fallback badge', () => {
     expect(screen.queryByText('⚠ Fallback')).not.toBeInTheDocument()
   })
 
+  it('sorts entries newest-first by timestamp, not alphabetically by message', () => {
+    seedHistory([
+      {
+        message: 'Zebra was the first message sent, an hour ago',
+        category: 'General Inquiry',
+        urgency: 'Low',
+        recommendedAction: 'Respond with FAQ link.',
+        reasoning: 'Reasoning A.',
+        timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+      },
+      {
+        message: 'Apple was the second message sent, just now',
+        category: 'General Inquiry',
+        urgency: 'Low',
+        recommendedAction: 'Respond with FAQ link.',
+        reasoning: 'Reasoning B.',
+        timestamp: new Date().toISOString(),
+      },
+    ])
+
+    render(<HistoryPage />)
+
+    const messages = screen.getAllByText(/was the (first|second) message sent/)
+    expect(messages[0]).toHaveTextContent('Apple was the second message sent, just now')
+    expect(messages[1]).toHaveTextContent('Zebra was the first message sent, an hour ago')
+  })
+
   it('does not crash on legacy entries with no source field', () => {
     seedHistory([
       {

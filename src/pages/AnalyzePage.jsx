@@ -35,7 +35,7 @@ function AnalyzePage() {
       const urgency = calculateUrgency(message)
 
       // Get recommended action (template-based)
-      const recommendedAction = getRecommendedAction(category)
+      const recommendedAction = getRecommendedAction(category, urgency)
 
       const analysisResult = {
         message,

@@ -85,6 +85,12 @@ This project was built with intentional bugs as part of a technical assessment. 
 **Problem:** When the Groq API call failed for any reason, the app silently returned keyword-guessed "mock" data in the exact same shape as a real AI response — the only trace was a `console.warn` no end user would ever see. Staff could unknowingly route customers based on fake heuristic guesses.
 **Fix:** `categorizeMessage` now tags its result with `source: 'ai' | 'mock'`. The Analyze page shows a clear warning banner when a result is a fallback, and History tags past fallback entries with a badge. Covered by `src/utils/llmHelper.test.js` (source tagging), `src/pages/AnalyzePage.test.jsx` (banner shown/hidden correctly, and persisted into history), and `src/pages/HistoryPage.test.jsx` (badge shown/hidden, and legacy entries without a `source` field don't crash).
 
+### 4. Wrong recommendation template and alphabetically-sorted history
+**Problem:** "Feature Request" incorrectly mapped to the billing-portal action (copy-paste bug), `getRecommendedAction` accepted an `urgency` argument but never used it, and the call site in AnalyzePage didn't even pass urgency in. Separately, History sorted entries alphabetically by message text instead of by time, so agents couldn't see what just came in.
+**Fix:** Corrected the Feature Request template text, made `getRecommendedAction` prepend an escalation instruction for High-urgency items, fixed the AnalyzePage call site to pass urgency, and changed History to sort by timestamp, newest first. Covered by `src/utils/templates.test.js` and a chronological-ordering test in `src/pages/HistoryPage.test.jsx`.
+
+`shouldEscalate()` is left unused — its logic ignored category/urgency and duplicated what the urgency-based escalation instruction above now covers.
+
 ## Example Test Messages
 
 Try analyzing these messages to see how the triage system works:

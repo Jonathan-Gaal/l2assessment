@@ -6,7 +6,7 @@ const actionTemplates = {
   "Billing Issue": "Ask user to check billing portal.",
   "Technical Problem": "Suggest user to restart their browser.",
   "General Inquiry": "Respond with FAQ link.",
-  "Feature Request": "Ask user to check billing portal.",
+  "Feature Request": "Log the request in the product backlog for review.",
   "Unknown": "Review manually."
 }
 
@@ -18,7 +18,8 @@ const actionTemplates = {
  * @returns {string} - Recommended next step
  */
 export function getRecommendedAction(category, urgency) {
-  return actionTemplates[category] || "No recommendation available."
+  const baseAction = actionTemplates[category] || "No recommendation available."
+  return urgency === 'High' ? `Escalate immediately: ${baseAction}` : baseAction
 }
 
 /**
