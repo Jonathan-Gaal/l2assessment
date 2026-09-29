@@ -11,7 +11,7 @@ Support teams waste time manually reading and triaging customer messages. This t
 ## Tech Stack
 
 - **Frontend**: React + Vite + Tailwind CSS
-- **AI**: Groq API (Llama 3.3 70B - Free tier)
+- **AI**: Groq API (openai/gpt-oss-20b - Free tier)
 - **Runtime**: Browser-based (local development only)
 
 ## Setup Instructions
@@ -63,12 +63,19 @@ Support teams waste time manually reading and triaging customer messages. This t
 1. **Paste Message**: User pastes a customer support message into the text area
 2. **Analyze**: Click "Analyze Message" to process the input
 3. **Classification**: The app runs three processes in parallel:
-   - **Category Classification** (LLM): Uses Groq AI (Llama 3.3 70B) to categorize the message
+   - **Category Classification** (LLM): Uses Groq AI (openai/gpt-oss-20b) to categorize the message
    - **Urgency Scoring** (Rule-based): Applies simple rules to determine urgency
    - **Recommendation** (Template-based): Maps category to a recommended action
 4. **Display Results**: Shows category, urgency tag, recommended action, and AI reasoning
 5. **History**: All analyses are saved to localStorage and viewable in the History tab
 
+## Known Issues & Fixes
+
+This project was built with intentional bugs as part of a technical assessment. Below is a log of the issues found and how each was fixed, in order of severity.
+
+### 1. Deprecated / enterprise-only Groq model
+**Problem:** The app called Groq's `llama-3.3-70b-versatile`, which has moved to Groq's Enterprise tier and returns a 404 for standard free-tier API keys — every request silently fell back to fake mock data.
+**Fix:** Switched to `openai/gpt-oss-20b`, available on Groq's free/developer tier, verified working end-to-end. Covered by `src/utils/llmHelper.test.js` (mocks the Groq client to assert the correct model is requested and that category parsing/mock fallback still behave correctly).
 
 ## Example Test Messages
 
@@ -113,7 +120,7 @@ The dashboard won't load when I try to access it. I've tried refreshing but it k
 - ✅ **Completely Free** - No credit card required
 - ✅ **Fast Inference** - Groq's LPU technology is incredibly fast
 - ✅ **Generous Limits** - ~14,400 requests/day on free tier
-- ✅ **High Quality** - Llama 3.3 70B performs excellently
+- ✅ **High Quality** - Free-tier models (openai/gpt-oss-20b) perform excellently
 - ✅ **Easy Signup** - Get started in minutes at https://console.groq.com
 
 ## License
