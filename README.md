@@ -81,6 +81,10 @@ This project was built with intentional bugs as part of a technical assessment. 
 **Problem:** The urgency scorer penalized ALL-CAPS and short messages as *less* urgent (both common in real emergencies — e.g. "SITE IS DOWN RIGHT NOW" scored Low), and factored in the current day-of-week/hour, so the same message could score differently depending on when it was analyzed. There was no keyword signal for genuine emergencies at all.
 **Fix:** Rewrote `calculateUrgency` to be fully deterministic (no time dependence), removed the ALL-CAPS/brevity penalties, and added explicit keyword detection for emergency language (down, outage, broken, urgent, etc.) as the dominant signal. Polite/positive tone still dampens urgency but can no longer fully mask a real emergency. Covered by `src/utils/urgencyScorer.test.js`, including a determinism check and the "SITE IS DOWN RIGHT NOW" / "Server down now" regression cases.
 
+### 3. Invisible fallback to fake AI data
+**Problem:** When the Groq API call failed for any reason, the app silently returned keyword-guessed "mock" data in the exact same shape as a real AI response — the only trace was a `console.warn` no end user would ever see. Staff could unknowingly route customers based on fake heuristic guesses.
+**Fix:** `categorizeMessage` now tags its result with `source: 'ai' | 'mock'`. The Analyze page shows a clear warning banner when a result is a fallback, and History tags past fallback entries with a badge. Covered by `src/utils/llmHelper.test.js` (source tagging), `src/pages/AnalyzePage.test.jsx` (banner shown/hidden correctly, and persisted into history), and `src/pages/HistoryPage.test.jsx` (badge shown/hidden, and legacy entries without a `source` field don't crash).
+
 ## Example Test Messages
 
 Try analyzing these messages to see how the triage system works:

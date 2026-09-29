@@ -37,6 +37,16 @@ describe('categorizeMessage', () => {
     expect(result.category).toBe('Billing Issue')
   })
 
+  it('tags a successful AI response with source "ai"', async () => {
+    mockCreate.mockResolvedValue({
+      choices: [{ message: { content: 'This is a billing issue.' } }],
+    })
+
+    const result = await categorizeMessage('Why was I charged twice?')
+
+    expect(result.source).toBe('ai')
+  })
+
   it('falls back to a mock categorization when the API call fails', async () => {
     mockCreate.mockRejectedValue(new Error('Invalid API Key'))
 
@@ -44,5 +54,13 @@ describe('categorizeMessage', () => {
 
     expect(result.category).toBeTruthy()
     expect(result.reasoning).toBeTruthy()
+  })
+
+  it('tags a failed API call with source "mock" so the UI can warn the user', async () => {
+    mockCreate.mockRejectedValue(new Error('Invalid API Key'))
+
+    const result = await categorizeMessage('Server down now')
+
+    expect(result.source).toBe('mock')
   })
 })

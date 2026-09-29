@@ -31,11 +31,9 @@ export async function categorizeMessage(message) {
     });
 
     const content = response.choices[0].message.content;
-    
-    const lines = content.split('\n');
+
     let category = "Unknown";
-    let reasoning = content;
-    
+
     if (content.toLowerCase().includes('billing')) {
       category = "Billing Issue";
     } else if (content.toLowerCase().includes('technical') || content.toLowerCase().includes('bug')) {
@@ -45,14 +43,18 @@ export async function categorizeMessage(message) {
     } else if (content.toLowerCase().includes('inquiry') || content.toLowerCase().includes('question')) {
       category = "General Inquiry";
     }
-    
+
     return {
       category,
-      reasoning: content
+      reasoning: content,
+      source: 'ai'
     };
   } catch (error) {
     console.warn('Groq API failed, using mock response:', error.message);
-    return getMockCategorization(message);
+    return {
+      ...getMockCategorization(message),
+      source: 'mock'
+    };
   }
 }
 

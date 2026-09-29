@@ -29,20 +29,21 @@ function AnalyzePage() {
     
     try {
       // Run categorization (LLM call)
-      const { category, reasoning } = await categorizeMessage(message)
-      
+      const { category, reasoning, source } = await categorizeMessage(message)
+
       // Calculate urgency (rule-based)
       const urgency = calculateUrgency(message)
-      
+
       // Get recommended action (template-based)
       const recommendedAction = getRecommendedAction(category)
-      
+
       const analysisResult = {
         message,
         category,
         urgency,
         recommendedAction,
         reasoning,
+        source,
         timestamp: new Date().toISOString()
       }
 
@@ -128,7 +129,19 @@ function AnalyzePage() {
         {results && (
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Analysis Results</h2>
-            
+
+            {results.source === 'mock' && (
+              <div className="mb-4 flex items-start gap-3 bg-amber-50 border-2 border-amber-400 rounded-lg p-4">
+                <span className="text-2xl" aria-hidden="true">⚠️</span>
+                <div>
+                  <div className="font-bold text-amber-900">AI service unavailable</div>
+                  <div className="text-sm text-amber-800">
+                    Showing a lower-confidence keyword-based estimate instead of live AI analysis.
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-4">
               <div>
                 <div className="text-sm font-semibold text-gray-600 mb-1">Category</div>
