@@ -74,6 +74,7 @@ Support teams waste time manually reading and triaging customer messages. This t
 | Date | Change | Section |
 |---|---|---|
 | 2026-11-09 | Structured AI categorization: model returns category, label and reason as JSON; badge shows the label | [Week 8 Improvement](#week-8-improvement-structured-ai-categorization) |
+| 2026-11-09 | AI Reasoning box uses one fixed line: **Category:** label - reason | [Week 8 Improvement, step 3](#what-was-done-and-why) |
 | 2026-11-09 | Added live test harness (`eval/`) and before/after test log | [Results](#results) |
 | 2026-09-29 | Switched to a supported Groq model | [Known Issues #1](#1-deprecated--enterprise-only-groq-model) |
 | 2026-09-29 | Rewrote urgency scoring to be deterministic | [Known Issues #2](#2-inverted-and-non-deterministic-urgency-scoring) |
@@ -106,7 +107,7 @@ and the badge still said Unknown.
 2. **Require a fixed answer format (JSON).** The model must reply with `{"category", "label", "reason"}`, enforced with Groq's JSON mode (`response_format: { type: "json_object" }`).
    *Why:* reading a known field is reliable, while searching free text for keywords is guesswork that breaks whenever the model words things differently, uses a different dash, or a model update changes its style. We considered splitting the text on the dash, but rejected it for the same reason.
 
-3. **Show a short label in the badge, with the routed category under it.** `label` is a 2-4 word summary such as "Account Compromise". The badge shows it, with "Routed as Technical Problem" underneath. `reason` (for example "Unauthorized login and password change") fills the AI Reasoning box.
+3. **Show a short label in the badge, with the routed category under it.** `label` is a 2-4 word summary such as "Account Compromise". The badge shows it, with "Routed as Technical Problem" underneath. The AI Reasoning box always uses one fixed line built from the label and reason: **Category:** Account Compromise - Unauthorized login and password change.
    *Why:* agents get the specific issue at a glance, while routing and recommended actions still use the fixed category list they depend on. A free-text label alone would have broken template lookup and filled History with one-off categories.
 
 4. **Validate the answer and route anything unusable to manual review.** A category outside the list, or a reply that isn't valid JSON, becomes **Unknown**, which means "Review manually."

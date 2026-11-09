@@ -47,7 +47,7 @@ describe('categorizeMessage', () => {
 
     expect(result.category).toBe('Technical Problem')
     expect(result.label).toBe('Account Compromise')
-    expect(result.reasoning).toBe('Unauthorized login and password change')
+    expect(result.reasoning).toBe('**Category:** Account Compromise - Unauthorized login and password change')
   })
 
   it('routes a category outside the allowed list to Unknown', async () => {
