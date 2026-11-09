@@ -29,7 +29,7 @@ function AnalyzePage() {
     
     try {
       // Run categorization (LLM call)
-      const { category, reasoning, source } = await categorizeMessage(message)
+      const { category, label, reasoning, source } = await categorizeMessage(message)
 
       // Calculate urgency (rule-based)
       const urgency = calculateUrgency(message)
@@ -40,6 +40,7 @@ function AnalyzePage() {
       const analysisResult = {
         message,
         category,
+        label,
         urgency,
         recommendedAction,
         reasoning,
@@ -146,8 +147,11 @@ function AnalyzePage() {
               <div>
                 <div className="text-sm font-semibold text-gray-600 mb-1">Category</div>
                 <div className="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-semibold">
-                  {results.category}
+                  {results.label || results.category}
                 </div>
+                {results.label && (
+                  <div className="text-sm text-gray-500 mt-1">Routed as {results.category}</div>
+                )}
               </div>
 
               <div>
