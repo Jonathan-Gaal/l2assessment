@@ -30,6 +30,24 @@ describe('AnalyzePage mock-fallback banner', () => {
     expect(screen.queryByText('AI service unavailable')).not.toBeInTheDocument()
   })
 
+  it('shows the AI short label in the category badge with the routed category beneath', async () => {
+    categorizeMessage.mockResolvedValue({
+      category: 'Technical Problem',
+      label: 'Account Compromise',
+      reasoning: 'Unauthorized login and password change',
+      source: 'ai',
+    })
+
+    render(<AnalyzePage />)
+    fireEvent.change(screen.getByPlaceholderText('Paste customer message here...'), {
+      target: { value: 'Someone logged into my account' },
+    })
+    fireEvent.click(screen.getByText('Analyze Message'))
+
+    await waitFor(() => expect(screen.getByText('Account Compromise')).toBeInTheDocument())
+    expect(screen.getByText('Routed as Technical Problem')).toBeInTheDocument()
+  })
+
   it('shows a visible warning banner when the result is a mock fallback', async () => {
     categorizeMessage.mockResolvedValue({
       category: 'Technical Problem',
