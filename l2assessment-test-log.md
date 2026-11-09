@@ -3,7 +3,7 @@
 Eight customer messages run through the app's real triage pipeline to measure one improvement: **structured AI categorization**. Each message targets a specific failure mode: urgency signals, category boundaries, mixed sentiment, churn risk and prompt injection.
 
 **Setup:** Groq model `openai/gpt-oss-20b`, live API key. Run with `node eval/run-triage-eval.mjs`, which loads the same `src/utils` code the Analyze page uses. Cases live in `eval/triage-cases.json`.
-**Run date:** 2026-11-09
+**Created:** 2026-11-09 · **Before run:** 2026-11-09 (commit `4a2ab35`) · **After run:** 2026-11-09 (branch `feat/structured-ai-categorization`)
 
 ## The improvement
 
